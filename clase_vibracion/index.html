@@ -1,0 +1,2172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Análisis de Vibraciones con IA - Presentación</title>
+<meta name="description" content="Taller: De Datos a Decisiones Inteligentes - Análisis de Vibraciones con IA para Mantenimiento Predictivo 4.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --color-background: #F8FAFC;
+        --color-text: #1E293B;
+        --color-text-muted: #64748B;
+        --color-primary: #0F172A;
+        --color-secondary: #2563EB;
+        --color-accent: #F59E0B;
+        --color-accent-hover: #D97706;
+        --color-card-bg: #FFFFFF;
+        --color-border: #E2E8F0;
+        --color-note-bg: #EFF6FF;
+        --color-success: #059669;
+        --color-danger: #DC2626;
+        --font-heading: 'Space Grotesk', sans-serif;
+        --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        --border-radius: 16px;
+        --border-radius-sm: 10px;
+        --box-shadow: 0 1px 3px rgba(15,23,42,0.04), 0 4px 12px rgba(15,23,42,0.06);
+        --box-shadow-hover: 0 4px 8px rgba(15,23,42,0.06), 0 12px 32px rgba(15,23,42,0.1);
+        --transition-base: 220ms cubic-bezier(0.22, 1, 0.36, 1);
+        --transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: auto; }
+    body {
+        font-family: var(--font-body);
+        line-height: 1.7;
+        background-color: var(--color-primary);
+        color: var(--color-text);
+        overflow: hidden;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        height: 100vh;
+        width: 100vw;
+    }
+
+    /* ===== SLIDES CONTAINER ===== */
+    .slides-container {
+        display: flex;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-snap-type: x mandatory;
+        width: 100vw;
+        height: 100vh;
+        scroll-behavior: smooth;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    .slides-container::-webkit-scrollbar { display: none; }
+
+    .slide {
+        min-width: 100vw;
+        width: 100vw;
+        height: 100vh;
+        scroll-snap-align: start;
+        overflow-y: auto;
+        overflow-x: hidden;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 0 2rem;
+        position: relative;
+        background-color: var(--color-background);
+        scrollbar-width: thin;
+        scrollbar-color: var(--color-border) transparent;
+    }
+    .slide::-webkit-scrollbar { width: 5px; }
+    .slide::-webkit-scrollbar-track { background: transparent; }
+    .slide::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 4px; }
+    .slide::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+
+    .slide-content {
+        max-width: 960px;
+        width: 100%;
+        margin: auto 0;
+        padding: 3.5rem 0 5rem 0;
+        opacity: 0;
+        transform: translateX(60px);
+        transition: opacity 600ms cubic-bezier(0.22, 1, 0.36, 1), transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .slide.active .slide-content {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    .slide.from-left .slide-content {
+        transform: translateX(-60px);
+    }
+    .slide.from-left.active .slide-content {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    /* Stagger children */
+    .slide.active .stagger > * {
+        opacity: 0;
+        transform: translateY(20px);
+        animation: staggerIn 500ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    .slide.active .stagger > *:nth-child(1) { animation-delay: 0ms; }
+    .slide.active .stagger > *:nth-child(2) { animation-delay: 80ms; }
+    .slide.active .stagger > *:nth-child(3) { animation-delay: 160ms; }
+    .slide.active .stagger > *:nth-child(4) { animation-delay: 240ms; }
+    .slide.active .stagger > *:nth-child(5) { animation-delay: 320ms; }
+    .slide.active .stagger > *:nth-child(6) { animation-delay: 400ms; }
+    .slide.active .stagger > *:nth-child(7) { animation-delay: 480ms; }
+    .slide.active .stagger > *:nth-child(8) { animation-delay: 560ms; }
+    .slide.active .stagger > *:nth-child(9) { animation-delay: 640ms; }
+    .slide.active .stagger > *:nth-child(10) { animation-delay: 720ms; }
+
+    @keyframes staggerIn {
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== COVER SLIDE ===== */
+    .slide-cover {
+        background: linear-gradient(135deg, #0F172A 0%, #1E3A5F 40%, #2563EB 100%);
+        color: white;
+        position: relative;
+        overflow: hidden;
+        align-items: center;
+    }
+    .slide-cover::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -30%;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(245,158,11,0.12) 0%, transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+    .slide-cover::after {
+        content: '';
+        position: absolute;
+        bottom: -40%;
+        left: -20%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(37,99,235,0.15) 0%, transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+    .slide-cover .slide-content {
+        text-align: center;
+        position: relative;
+        z-index: 1;
+        padding: 0;
+    }
+
+    /* ===== SCROLL INDICATOR ===== */
+    .scroll-hint {
+        position: absolute;
+        bottom: 64px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        opacity: 0;
+        transition: opacity 400ms ease;
+        pointer-events: none;
+        z-index: 10;
+    }
+    .scroll-hint.visible {
+        opacity: 1;
+    }
+    .scroll-hint span {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--color-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+    .scroll-hint svg {
+        width: 20px;
+        height: 20px;
+        color: var(--color-text-muted);
+        animation: scrollBounce 1.5s ease-in-out infinite;
+    }
+    @keyframes scrollBounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(5px); }
+    }
+    .slide-cover h1 {
+        font-family: var(--font-heading);
+        font-size: 3.5rem;
+        letter-spacing: -0.03em;
+        margin-bottom: 1rem;
+        color: white;
+        line-height: 1.1;
+    }
+    .slide-cover .subtitle {
+        font-size: 1.35rem;
+        opacity: 0.85;
+        font-weight: 400;
+        max-width: 600px;
+        margin: 0 auto;
+        color: white;
+    }
+    .slide-cover .cover-hint {
+        margin-top: 3rem;
+        font-size: 0.9rem;
+        opacity: 0.5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    /* ===== TYPOGRAPHY ===== */
+    h1, h2, h3, h4 {
+        font-family: var(--font-heading);
+        color: var(--color-primary);
+        line-height: 1.2;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+    }
+    h2 {
+        font-size: 2.2rem;
+        padding-bottom: 0.75rem;
+        display: inline-block;
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+    h2::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 60px;
+        height: 4px;
+        background: linear-gradient(90deg, var(--color-secondary), var(--color-accent));
+        border-radius: 2px;
+    }
+    h3 {
+        font-size: 1.6rem;
+        color: var(--color-secondary);
+        margin-bottom: 1.2rem;
+    }
+    h4 {
+        font-size: 1.15rem;
+        color: var(--color-primary);
+        margin-bottom: 0.75rem;
+    }
+    p, li { margin-bottom: 1rem; font-size: 1.05rem; }
+    strong { color: var(--color-primary); }
+    ul, ol { padding-left: 1.5rem; }
+
+    /* ===== SLIDE LABEL ===== */
+    .slide-label {
+        position: absolute;
+        top: 1.5rem;
+        left: 2rem;
+        font-family: var(--font-heading);
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--color-text-muted);
+        background: var(--color-note-bg);
+        padding: 0.35rem 0.75rem;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        z-index: 5;
+    }
+    .slide-label svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    /* ===== CARDS ===== */
+    .comparison-card {
+        background: var(--color-card-bg);
+        border: 1px solid var(--color-border);
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        text-align: center;
+        transition: all var(--transition-base);
+        position: relative;
+        overflow: hidden;
+    }
+    .comparison-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--color-secondary), var(--color-accent));
+    }
+    .comparison-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--box-shadow-hover);
+    }
+    .comparison-card h4 {
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+        color: var(--color-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+    .comparison-card .example {
+        background: var(--color-note-bg);
+        padding: 0.85rem 1rem;
+        border-radius: var(--border-radius-sm);
+        margin: 1rem 0;
+        font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: var(--color-secondary);
+    }
+
+    .data-comparison {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1.5rem;
+        margin: 1.5rem 0;
+    }
+
+    /* ===== CASE STUDY CARDS ===== */
+    .case-study-card {
+        background: var(--color-card-bg);
+        border: 1px solid var(--color-border);
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        transition: all var(--transition-base);
+    }
+    .case-study-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--box-shadow-hover);
+    }
+    .case-study-card h4 {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 1rem;
+    }
+    .case-study-card h4 .card-icon {
+        width: 24px;
+        height: 24px;
+        flex-shrink: 0;
+    }
+
+    .grid-container-3 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    /* ===== HIGHLIGHT BOX ===== */
+    .highlight-box {
+        background: linear-gradient(135deg, var(--color-note-bg) 0%, #F0F4FF 100%);
+        padding: 2rem;
+        border-radius: var(--border-radius);
+        margin: 1.5rem 0;
+        border-left: 4px solid var(--color-secondary);
+    }
+
+    /* ===== OBJECTIVE GRID ===== */
+    .objective-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+    .objective-item {
+        text-align: center;
+        padding: 1.5rem 1rem;
+        background: var(--color-card-bg);
+        border-radius: var(--border-radius);
+        border: 1px solid var(--color-border);
+        transition: all var(--transition-base);
+    }
+    .objective-item:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--box-shadow-hover);
+    }
+    .objective-item .icon {
+        font-size: 2rem;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* ===== KPI CARDS ===== */
+    .kpi-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+    .kpi-card {
+        border: 1px solid var(--color-border);
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        background: var(--color-card-bg);
+        transition: all var(--transition-base);
+        position: relative;
+        overflow: hidden;
+    }
+    .kpi-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--color-secondary), var(--color-accent));
+        opacity: 0;
+        transition: opacity var(--transition-base);
+    }
+    .kpi-card:hover {
+        box-shadow: var(--box-shadow-hover);
+        transform: translateY(-3px);
+    }
+    .kpi-card:hover::before { opacity: 1; }
+
+    /* ===== ACCORDION ===== */
+    .accordion-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    .accordion-item {
+        border: 1px solid var(--color-border);
+        border-radius: var(--border-radius-sm);
+        overflow: hidden;
+        transition: box-shadow var(--transition-base);
+    }
+    .accordion-item:hover { box-shadow: var(--box-shadow); }
+    .accordion-item summary {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 1.25rem 1.5rem;
+        background-color: var(--color-card-bg);
+        font-family: var(--font-heading);
+        font-weight: 600;
+        font-size: 1.05rem;
+        color: var(--color-primary);
+        cursor: pointer;
+        position: relative;
+        outline: none;
+        list-style: none;
+        transition: background-color var(--transition-base);
+    }
+    .accordion-item summary::-webkit-details-marker { display: none; }
+    .accordion-item summary:hover { background-color: var(--color-note-bg); }
+    .accordion-item summary .chevron-icon {
+        width: 20px;
+        height: 20px;
+        margin-left: auto;
+        flex-shrink: 0;
+        transition: transform var(--transition-base);
+        color: var(--color-text-muted);
+    }
+    .accordion-item[open] summary .chevron-icon {
+        transform: rotate(180deg);
+    }
+    .accordion-item .content { padding: 1.5rem; }
+
+    /* ===== PLACEHOLDER / IMAGE ===== */
+    .placeholder {
+        border: 2px dashed var(--color-border);
+        background-color: #FAFBFC;
+        padding: 2rem;
+        text-align: center;
+        font-style: italic;
+        color: var(--color-text-muted);
+        border-radius: var(--border-radius);
+        margin: 1.5rem 0;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    /* ===== TOOLTIP ===== */
+    .tooltip {
+        position: relative;
+        cursor: help;
+        border-bottom: 1.5px dotted var(--color-secondary);
+        color: var(--color-secondary);
+        font-weight: 500;
+    }
+    .tooltip::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: 130%;
+        left: 50%;
+        transform: translateX(-50%) translateY(4px);
+        background: var(--color-primary);
+        color: white;
+        padding: 0.6rem 1rem;
+        border-radius: var(--border-radius-sm);
+        font-size: 0.85rem;
+        font-weight: 400;
+        opacity: 0;
+        visibility: hidden;
+        transition: all var(--transition-base);
+        z-index: 1000;
+        max-width: 280px;
+        white-space: normal;
+        text-align: center;
+        line-height: 1.4;
+        pointer-events: none;
+        box-shadow: 0 4px 12px rgba(15,23,42,0.15);
+    }
+    .tooltip::before {
+        content: '';
+        position: absolute;
+        bottom: 122%;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 6px solid transparent;
+        border-top-color: var(--color-primary);
+        opacity: 0;
+        visibility: hidden;
+        transition: all var(--transition-base);
+        pointer-events: none;
+    }
+    .tooltip:hover::after,
+    .tooltip:hover::before {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(-50%) translateY(0);
+    }
+    .tooltip:hover::before {
+        transform: translateX(-50%);
+    }
+
+    /* ===== SVG DIAGRAMS ===== */
+    .svg-diagram {
+        display: block;
+        margin: 1.5rem auto;
+        width: 100%;
+        max-width: 750px;
+    }
+
+    /* ===== INLINE ICONS ===== */
+    .inline-icon {
+        width: 20px;
+        height: 20px;
+        display: inline-block;
+        vertical-align: middle;
+        flex-shrink: 0;
+    }
+    .inline-icon-lg {
+        width: 40px;
+        height: 40px;
+    }
+
+    /* ===== TOC SLIDE ===== */
+    .toc-list {
+        list-style: none;
+        padding: 0;
+    }
+    .toc-list li {
+        font-size: 1.15rem;
+        margin-bottom: 0.5rem;
+        padding: 0.85rem 1.25rem;
+        border-radius: var(--border-radius-sm);
+        transition: all var(--transition-base);
+        border: 1px solid transparent;
+        cursor: pointer;
+    }
+    .toc-list li:hover {
+        background-color: var(--color-note-bg);
+        border-color: var(--color-border);
+        transform: translateX(4px);
+    }
+    .toc-list li a {
+        color: var(--color-text);
+        font-weight: 500;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .toc-list li a .toc-icon {
+        width: 22px;
+        height: 22px;
+        flex-shrink: 0;
+        color: var(--color-secondary);
+    }
+
+    /* ===== NAVIGATION BAR ===== */
+    .nav-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba(255,255,255,0.95);
+        padding: 0.6rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+        box-shadow: 0 -1px 8px rgba(15,23,42,0.06);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        z-index: 100;
+        height: 56px;
+    }
+    .nav-btn {
+        background-color: var(--color-primary);
+        color: white;
+        border: none;
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        font-family: var(--font-body);
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all var(--transition-base);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        letter-spacing: 0.01em;
+    }
+    .nav-btn:hover {
+        background-color: var(--color-secondary);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+    }
+    .nav-btn:disabled {
+        background-color: #CBD5E1;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+    .nav-btn svg {
+        width: 16px;
+        height: 16px;
+    }
+    .slide-counter {
+        font-family: var(--font-heading);
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--color-primary);
+        min-width: 60px;
+        text-align: center;
+    }
+
+    /* ===== DOTS INDICATOR ===== */
+    .dots-container {
+        position: fixed;
+        bottom: 62px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        z-index: 100;
+        padding: 6px 12px;
+        background: rgba(255,255,255,0.8);
+        border-radius: 20px;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
+    .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--color-border);
+        cursor: pointer;
+        transition: all var(--transition-base);
+        border: none;
+        padding: 0;
+    }
+    .dot:hover {
+        background: var(--color-text-muted);
+        transform: scale(1.3);
+    }
+    .dot.active {
+        background: var(--color-secondary);
+        transform: scale(1.3);
+        box-shadow: 0 0 0 3px rgba(37,99,235,0.2);
+    }
+
+    /* ===== FULLSCREEN BUTTON ===== */
+    .fullscreen-btn {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        background: rgba(15,23,42,0.7);
+        border: 1.5px solid rgba(255,255,255,0.15);
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all var(--transition-base);
+        backdrop-filter: blur(8px);
+        z-index: 200;
+    }
+    .fullscreen-btn:hover {
+        background: rgba(37,99,235,0.85);
+        transform: scale(1.08);
+    }
+    .fullscreen-btn svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    /* ===== QUESTION SLIDE ===== */
+    .question-slide {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        min-height: calc(100vh - 8rem);
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+    .big-question {
+        font-size: 3rem;
+        font-family: var(--font-heading);
+        color: var(--color-primary);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+    }
+
+    /* ===== IMAGES ===== */
+    img {
+        max-width: 100%;
+        height: auto;
+        transition: opacity 300ms ease;
+    }
+    img[loading="lazy"] { opacity: 0; }
+    img[loading="lazy"].loaded { opacity: 1; }
+
+    /* ===== ACCESSIBILITY ===== */
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0,0,0,0);
+        white-space: nowrap;
+        border: 0;
+    }
+
+    .nav-btn:focus-visible,
+    .fullscreen-btn:focus-visible,
+    .accordion-item summary:focus-visible,
+    .dot:focus-visible {
+        outline: 3px solid var(--color-secondary);
+        outline-offset: 2px;
+    }
+
+    /* ===== REDUCED MOTION ===== */
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+        .slide-content {
+            opacity: 1 !important;
+            transform: none !important;
+            transition: none !important;
+        }
+        .slides-container { scroll-behavior: auto; }
+        .scroll-hint svg { animation: none !important; }
+        .slide.active .stagger > * {
+            opacity: 1 !important;
+            transform: none !important;
+            animation: none !important;
+        }
+    }
+
+    /* ===== RESPONSIVE ===== */
+    /* ===== Supervisor comparison panels ===== */
+    .supervisor-comparison {
+        display: flex;
+        align-items: stretch;
+        gap: 1rem;
+        width: 100%;
+        max-width: 860px;
+        margin: 1rem auto 0;
+    }
+    .comp-panel {
+        flex: 1;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 3px 14px rgba(15,23,42,0.09);
+        display: flex;
+        flex-direction: column;
+    }
+    .comp-panel--manual { background: linear-gradient(145deg,#FEF2F2,#FEE2E2); border: 1.5px solid #FECACA; }
+    .comp-panel--ai     { background: linear-gradient(145deg,#ECFDF5,#D1FAE5); border: 1.5px solid #A7F3D0; }
+    .comp-panel__header {
+        padding: 0.7rem 1rem;
+        font-weight: 700;
+        font-size: clamp(0.78rem,1.2vw,0.95rem);
+        font-family: 'Space Grotesk', sans-serif;
+        letter-spacing: 0.04em;
+        text-align: center;
+        border-bottom: 1px solid;
+    }
+    .comp-panel--manual .comp-panel__header { background: rgba(220,38,38,0.07);  color:#DC2626; border-color:#FECACA; }
+    .comp-panel--ai     .comp-panel__header { background: rgba(5,150,105,0.07);  color:#059669; border-color:#A7F3D0; }
+    .comp-panel__body {
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.65rem;
+        flex: 1;
+    }
+    .comp-sublabel {
+        align-self: flex-start;
+        font-size: 0.68rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: #94A3B8;
+        margin-bottom: 0.1rem;
+    }
+    .comp-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; align-self: flex-start; }
+    .comp-tag {
+        background: white;
+        border: 1px solid #E2E8F0;
+        border-radius: 6px;
+        padding: 0.18rem 0.5rem;
+        font-size: 0.73rem;
+        font-weight: 600;
+        color: #475569;
+    }
+    .comp-arrow-down { color: #CBD5E1; font-size: 1.3rem; line-height: 1; }
+    .comp-figure { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; }
+    .comp-figure-label { font-size: 0.75rem; font-weight: 600; color: #475569; }
+    .comp-time {
+        display: flex; align-items: center; gap: 0.45rem;
+        padding: 0.35rem 0.85rem;
+        border-radius: 20px;
+        font-size: clamp(0.75rem,1.1vw,0.85rem);
+        font-weight: 700;
+        border: 1.5px solid;
+        background: white;
+    }
+    .comp-time--slow { color:#DC2626; border-color:#FECACA; }
+    .comp-time--fast { color:#059669; border-color:#A7F3D0; }
+    .comp-panel__footer {
+        padding: 0.7rem 1rem;
+        border-top: 1px solid;
+        display: flex;
+        flex-direction: column;
+        gap: 0.22rem;
+        font-size: clamp(0.7rem,1vw,0.8rem);
+    }
+    .comp-panel--manual .comp-panel__footer { border-color:#FECACA; background:rgba(220,38,38,0.03); }
+    .comp-panel--ai     .comp-panel__footer { border-color:#A7F3D0; background:rgba(5,150,105,0.03); }
+    .comp-footer-main { font-weight: 700; }
+    .comp-panel--manual .comp-footer-main { color:#DC2626; }
+    .comp-panel--ai     .comp-footer-main { color:#059669; }
+    .comp-footer-sub { color:#94A3B8; padding-left: 0.5rem; }
+    .comp-center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        flex-shrink: 0;
+        padding: 0 0.25rem;
+    }
+    .comp-ia-badge {
+        background: #0F172A; color: white;
+        font-weight: 700; font-family: 'Space Grotesk', sans-serif;
+        font-size: 0.95rem; padding: 0.45rem 1rem;
+        border-radius: 20px; white-space: nowrap;
+    }
+    .comp-arrow-side { color:#F59E0B; font-size:1.3rem; font-weight:700; }
+    .comp-ai-flow {
+        display: flex; align-items: center;
+        gap: 0.5rem; width: 100%;
+        justify-content: center; flex-wrap: wrap;
+    }
+    .comp-ai-arrow { color:#F59E0B; font-size:1.1rem; font-weight:700; }
+    .comp-output-badge {
+        width: 42px; height: 42px;
+        background: #ECFDF5; border: 2px solid #6EE7B7;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+    }
+    @media (max-width: 768px) {
+        .supervisor-comparison { flex-direction: column; }
+        .comp-center { flex-direction: row; padding: 0.25rem 0; }
+    }
+
+    /* ===== Flow diagram responsive ===== */
+    .flow-diagram-html {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        max-width: 960px;
+        margin: 1rem auto 0;
+        gap: 0;
+    }
+    .flow-card-html {
+        background: white;
+        border: 1.5px solid #E2E8F0;
+        border-radius: 14px;
+        box-shadow: 0 3px 12px rgba(15,23,42,0.10);
+        padding: 1.4rem 1rem;
+        flex: 1;
+        min-width: 0;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .flow-card-html .card-title {
+        font-size: clamp(0.9rem, 1.5vw, 1.15rem);
+        font-weight: 700;
+        color: #0F172A;
+        font-family: 'Space Grotesk', sans-serif;
+        letter-spacing: 0.04em;
+    }
+    .flow-card-html .card-divider {
+        width: 80%;
+        height: 1px;
+        background: #E2E8F0;
+        margin: 0.1rem 0;
+    }
+    .flow-card-html .card-icon {
+        width: 100%;
+        height: 65px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .flow-card-html .card-desc {
+        font-size: clamp(0.72rem, 1.1vw, 0.85rem);
+        color: #64748B;
+    }
+    .flow-connector {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.45rem;
+        padding: 0 0.6rem;
+        flex-shrink: 0;
+        min-width: 100px;
+    }
+    .flow-connector .conn-line {
+        width: 100%;
+        height: 3px;
+        background: #F59E0B;
+        position: relative;
+        border-radius: 2px;
+    }
+    .flow-connector .conn-line::after {
+        content: '';
+        position: absolute;
+        right: -8px;
+        top: 50%;
+        transform: translateY(-50%);
+        border-left: 10px solid #F59E0B;
+        border-top: 6px solid transparent;
+        border-bottom: 6px solid transparent;
+    }
+    .flow-connector .conn-label {
+        background: #FEF3C7;
+        border: 1.5px solid #D97706;
+        border-radius: 8px;
+        padding: 0.25rem 0.65rem;
+        font-size: clamp(0.72rem, 1.1vw, 0.85rem);
+        font-weight: 700;
+        color: #78350F;
+        white-space: nowrap;
+    }
+
+    @media (max-width: 768px) {
+        .slide { padding: 0 1.25rem; }
+        .slide-content { padding: 2.5rem 0 5rem 0; }
+        .slide-cover h1 { font-size: 2.4rem; }
+        .slide-cover .subtitle { font-size: 1.1rem; }
+        h2 { font-size: 1.8rem; }
+        h3 { font-size: 1.3rem; }
+        .big-question { font-size: 2.2rem; text-align: center; width: 100%; }
+        .question-slide { width: 100%; align-items: center; text-align: center; }
+        .question-slide p { text-align: center; width: 100%; }
+        .kpi-container { grid-template-columns: 1fr; }
+        .grid-container-3 { grid-template-columns: 1fr; }
+        .data-comparison { grid-template-columns: 1fr; }
+        .objective-grid { grid-template-columns: repeat(2, 1fr); }
+        .svg-diagram { max-width: 100%; height: auto; }
+        .dots-container { display: none; }
+        .slide-label { font-size: 0.65rem; top: 1rem; left: 1rem; }
+
+        /* Flow diagram en columna */
+        .flow-diagram-html { flex-direction: column; gap: 0; align-items: center; width: 100%; }
+        .flow-card-html { width: 100%; max-width: 420px; padding: 1.2rem 1.4rem; }
+        .flow-card-html .card-icon { height: 55px; }
+        .flow-connector {
+            flex-direction: row;
+            min-width: unset;
+            width: 100%;
+            max-width: 420px;
+            padding: 0.2rem 1rem;
+            justify-content: center;
+            gap: 0.8rem;
+        }
+        .flow-connector .conn-line {
+            width: 36px;
+            height: 3px;
+            flex-shrink: 0;
+        }
+        .flow-connector .conn-line::after {
+            right: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-left: 10px solid #F59E0B;
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+            border-right: none;
+        }
+    }
+</style>
+</head>
+<body>
+
+<!-- Fullscreen Button -->
+<button class="fullscreen-btn" id="fullscreen-btn" aria-label="Pantalla completa">
+    <span class="sr-only">Pantalla Completa</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+</button>
+
+<!-- Dots Indicator -->
+<div class="dots-container" id="dots-container"></div>
+
+<!-- ===== SLIDES ===== -->
+<div class="slides-container" id="slides-container">
+
+    <!-- ========== SLIDE 1: COVER ========== -->
+    <div class="slide slide-cover active" data-slide="0">
+        <div class="slide-content">
+            <h1>De Datos a Decisiones Inteligentes</h1>
+            <p class="subtitle">Analisis de Vibraciones con IA para Mantenimiento Predictivo 4.0</p>
+            <div class="cover-hint">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                Usa las flechas o los botones para navegar
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SLIDE 2: TOC ========== -->
+    <div class="slide" data-slide="1">
+        <span class="slide-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            Indice
+        </span>
+        <div class="slide-content stagger">
+            <h2>Hoja de Ruta del Taller</h2>
+            <nav>
+                <ol class="toc-list">
+                    <li onclick="goToSlide(2)"><a href="javascript:void(0)"><svg class="toc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Bloque 1: Data, un Camino a las Decisiones Estrategicas</a></li>
+                    <li onclick="goToSlide(8)"><a href="javascript:void(0)"><svg class="toc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Bloque 2: El Lenguaje Oculto de las Vibraciones</a></li>
+                    <li onclick="goToSlide(12)"><a href="javascript:void(0)"><svg class="toc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Bloque 3: Vibracion Normal o Peligrosa? ISO 20816</a></li>
+                    <li onclick="goToSlide(13)"><a href="javascript:void(0)"><svg class="toc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93L12 22l-.75-12.07A4.001 4.001 0 0 1 12 2z"/><circle cx="12" cy="6" r="1"/></svg>Bloque 4: Creando un Supervisor Inteligente con IA</a></li>
+                    <li onclick="goToSlide(16)"><a href="javascript:void(0)"><svg class="toc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Bloque 5: Poniendo a Prueba Nuestro Modelo</a></li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- ========== SLIDE 3: BLOQUE 1 - INTRO ========== -->
+    <div class="slide" data-slide="2" style="position: relative; overflow: hidden;">
+        <!-- Background decorativo: ondas suaves -->
+        <svg style="position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; opacity: 0.07; pointer-events: none;" preserveAspectRatio="none" viewBox="0 0 1200 700">
+            <defs>
+                <linearGradient id="waveGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#60a5fa"/>
+                    <stop offset="100%" stop-color="#a78bfa"/>
+                </linearGradient>
+            </defs>
+            <!-- Onda 1 -->
+            <path d="M0 350 Q150 250, 300 350 T600 350 T900 350 T1200 350 L1200 700 L0 700Z" fill="url(#waveGrad1)"/>
+            <!-- Onda 2 -->
+            <path d="M0 420 Q200 320, 400 420 T800 420 T1200 420 L1200 700 L0 700Z" fill="#60a5fa" opacity="0.5"/>
+            <!-- Onda 3 -->
+            <path d="M0 500 Q180 430, 360 500 T720 500 T1080 500 T1200 500 L1200 700 L0 700Z" fill="#a78bfa" opacity="0.4"/>
+            <!-- Circulos geometricos decorativos -->
+            <circle cx="100" cy="120" r="60" fill="none" stroke="#60a5fa" stroke-width="1.5" opacity="0.6"/>
+            <circle cx="150" cy="150" r="90" fill="none" stroke="#a78bfa" stroke-width="1" opacity="0.4"/>
+            <circle cx="1050" cy="100" r="70" fill="none" stroke="#60a5fa" stroke-width="1.5" opacity="0.5"/>
+            <circle cx="1100" cy="140" r="45" fill="none" stroke="#a78bfa" stroke-width="1" opacity="0.4"/>
+            <!-- Lineas diagonales sutiles -->
+            <line x1="900" y1="0" x2="1200" y2="300" stroke="#60a5fa" stroke-width="1" opacity="0.3"/>
+            <line x1="950" y1="0" x2="1200" y2="250" stroke="#a78bfa" stroke-width="0.8" opacity="0.25"/>
+        </svg>
+        <span class="slide-label" style="position: relative; z-index: 1;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+            Bloque 1
+        </span>
+        <div class="slide-content stagger" style="position: relative; z-index: 1;">
+            <h2>Bloque 1: Data, un Camino a las Decisiones Estrategicas</h2>
+            <p>En el mundo industrial moderno, cada maquina genera miles de puntos de datos por segundo. Pero como transformamos esta avalancha de numeros en decisiones que realmente importen?</p>
+        </div>
+    </div>
+
+    <!-- ========== SLIDE 4: BLOQUE 1 - QUESTION ========== -->
+    <div class="slide" data-slide="3" style="position: relative; overflow: hidden;">
+        <!-- Background decorativo: ondas y geometria -->
+        <svg style="position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;" preserveAspectRatio="none" viewBox="0 0 1200 700">
+            <defs>
+                <linearGradient id="waveGrad2a" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#60a5fa"/>
+                    <stop offset="100%" stop-color="#a78bfa"/>
+                </linearGradient>
+                <linearGradient id="waveGrad2b" x1="100%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#818cf8"/>
+                    <stop offset="100%" stop-color="#38bdf8"/>
+                </linearGradient>
+            </defs>
+            <!-- Ondas parte inferior -->
+            <path d="M0 480 Q150 400, 300 480 T600 480 T900 480 T1200 480 L1200 700 L0 700Z" fill="url(#waveGrad2a)" opacity="0.12"/>
+            <path d="M0 530 Q200 460, 400 530 T800 530 T1200 530 L1200 700 L0 700Z" fill="#60a5fa" opacity="0.09"/>
+            <path d="M0 580 Q180 530, 360 580 T720 580 T1080 580 T1200 580 L1200 700 L0 700Z" fill="#a78bfa" opacity="0.08"/>
+            <!-- Ondas parte superior -->
+            <path d="M0 0 L1200 0 L1200 120 Q1050 180, 900 120 T600 120 T300 120 T0 120Z" fill="url(#waveGrad2b)" opacity="0.10"/>
+            <!-- Circulos esquina inferior izquierda -->
+            <circle cx="80" cy="620" r="80" fill="none" stroke="#60a5fa" stroke-width="1.5" opacity="0.15"/>
+            <circle cx="120" cy="600" r="50" fill="none" stroke="#a78bfa" stroke-width="1.2" opacity="0.12"/>
+            <circle cx="50" cy="580" r="30" fill="none" stroke="#818cf8" stroke-width="1" opacity="0.10"/>
+            <!-- Circulos esquina superior derecha -->
+            <circle cx="1100" cy="80" r="70" fill="none" stroke="#60a5fa" stroke-width="1.5" opacity="0.15"/>
+            <circle cx="1060" cy="50" r="40" fill="none" stroke="#a78bfa" stroke-width="1.2" opacity="0.12"/>
+            <!-- Hexagonos decorativos en los costados -->
+            <polygon points="60,300 90,280 120,300 120,340 90,360 60,340" fill="none" stroke="#60a5fa" stroke-width="1" opacity="0.12"/>
+            <polygon points="1100,350 1130,330 1160,350 1160,390 1130,410 1100,390" fill="none" stroke="#a78bfa" stroke-width="1" opacity="0.12"/>
+            <!-- Puntos dispersos -->
+            <circle cx="200" cy="150" r="3" fill="#60a5fa" opacity="0.15"/>
+            <circle cx="350" cy="100" r="2.5" fill="#a78bfa" opacity="0.12"/>
+            <circle cx="1000" cy="600" r="3" fill="#818cf8" opacity="0.14"/>
+            <circle cx="850" cy="650" r="2" fill="#60a5fa" opacity="0.12"/>
+            <circle cx="150" cy="450" r="2.5" fill="#a78bfa" opacity="0.13"/>
+            <circle cx="1050" cy="500" r="2" fill="#60a5fa" opacity="0.11"/>
+        </svg>
+        <span class="slide-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+            Bloque 1
+        </span>
+        <div class="slide-content question-slide">
+            <h3 class="big-question">Data e informacion son lo mismo?</h3>
+            <p style="font-size: 1.2rem; margin-top: 2rem; color: var(--color-text-muted);">
+                <em>Piensalo por un momento...</em>
+            </p>
+        </div>
+    </div>
+
+    <!-- ========== SLIDE 5: BLOQUE 1 - FLOW DIAGRAM ========== -->
+    <div class="slide" data-slide="4" style="position: relative; overflow: hidden;">
+        <!-- Background decorativo minimalista con color solido -->
+        <svg style="position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;" preserveAspectRatio="xMidYMid slice" viewBox="0 0 1200 700">
+            <!-- Blob azul esquina inferior izquierda -->
+            <circle cx="0" cy="700" r="280" fill="#3b82f6" opacity="0.08"/>
+            <circle cx="0" cy="700" r="180" fill="#60a5fa" opacity="0.10"/>
+            <!-- Blob violeta esquina superior derecha -->
+            <circle cx="1200" cy="0" r="260" fill="#7c3aed" opacity="0.08"/>
+            <circle cx="1200" cy="0" r="160" fill="#a78bfa" opacity="0.10"/>
+            <!-- Cuadrado rotado esquina superior izquierda -->
+            <rect x="30" y="20" width="70" height="70" rx="10" fill="#38bdf8" opacity="0.13" transform="rotate(18 65 55)"/>
+            <!-- Triangulo solido esquina inferior derecha -->
+            <polygon points="1120,700 1200,580 1200,700" fill="#818cf8" opacity="0.12"/>
+            <!-- Circulo pequeño solido zona inferior izquierda libre -->
+            <circle cx="110" cy="600" r="28" fill="#60a5fa" opacity="0.12"/>
+            <circle cx="60"  cy="540" r="14" fill="#38bdf8" opacity="0.10"/>
+            <!-- Rombo solido esquina superior derecha libre -->
+            <polygon points="1080,80 1110,50 1140,80 1110,110" fill="#a78bfa" opacity="0.13"/>
+            <!-- Tres circulos alineados zona superior izquierda -->
+            <circle cx="55"  cy="160" r="7" fill="#60a5fa" opacity="0.18"/>
+            <circle cx="80"  cy="140" r="5" fill="#38bdf8" opacity="0.14"/>
+            <circle cx="100" cy="120" r="3.5" fill="#7c3aed" opacity="0.12"/>
+        </svg>
+        <span class="slide-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+            Bloque 1
+        </span>
+        <div class="slide-content stagger">
+            <h3>Flujo: De Dato a Decision</h3>
+            <div class="flow-diagram-html">
+
+                <!-- Card 1: DATO -->
+                <div class="flow-card-html">
+                    <div class="card-title">DATO</div>
+                    <div class="card-divider"></div>
+                    <div class="card-icon">
+                        <svg viewBox="0 0 120 70" width="120" height="70">
+                            <path d="M4 50 L20 50 L35 18 L55 62 L73 30 L90 48 L108 44" stroke="#94A3B8" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="35" cy="18" r="4" fill="#94A3B8"/>
+                            <circle cx="55" cy="62" r="4" fill="#94A3B8"/>
+                        </svg>
+                    </div>
+                    <div class="card-desc">Crudo, sin contexto</div>
+                </div>
+
+                <!-- Conector 1 -->
+                <div class="flow-connector">
+                    <div class="conn-line"></div>
+                    <div class="conn-label">Procesamiento</div>
+                </div>
+
+                <!-- Card 2: INFORMACION -->
+                <div class="flow-card-html">
+                    <div class="card-title">INFORMACION</div>
+                    <div class="card-divider"></div>
+                    <div class="card-icon">
+                        <svg viewBox="0 0 140 75" width="140" height="70">
+                            <defs>
+                                <linearGradient id="barGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+                                    <stop offset="0%" stop-color="#2563EB"/>
+                                    <stop offset="100%" stop-color="#60A5FA"/>
+                                </linearGradient>
+                            </defs>
+                            <rect x="8"  y="38" width="26" height="28" rx="4" fill="url(#barGrad)" opacity="0.80"/>
+                            <rect x="42" y="18" width="26" height="48" rx="4" fill="url(#barGrad)" opacity="0.90"/>
+                            <rect x="76" y="28" width="26" height="38" rx="4" fill="url(#barGrad)"/>
+                            <rect x="110" y="46" width="26" height="20" rx="4" fill="url(#barGrad)" opacity="0.70"/>
+                            <line x1="4" y1="66" x2="138" y2="66" stroke="#CBD5E1" stroke-width="1.5"/>
+                        </svg>
+                    </div>
+                    <div class="card-desc">Organizada, con significado</div>
+                </div>
+
+                <!-- Conector 2 -->
+                <div class="flow-connector">
+                    <div class="conn-line"></div>
+                    <div class="conn-label">Analisis</div>
+                </div>
+
+                <!-- Card 3: DECISION -->
+                <div class="flow-card-html">
+                    <div class="card-title">DECISION</div>
+                    <div class="card-divider"></div>
+                    <div class="card-icon">
+                        <svg viewBox="0 0 80 70" width="80" height="70">
+                            <circle cx="40" cy="35" r="28" fill="#FEF3C7" stroke="#F59E0B" stroke-width="2.5"/>
+                            <path d="M28 35 L36 44 L54 24" stroke="#D97706" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="card-desc">Accionable, estrategica</div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SLIDE 6: BLOQUE 1 - COMPARISON ========== -->
+    <div class="slide" data-slide="5">
+        <span class="slide-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+            Bloque 1
+        </span>
+        <div class="slide-content stagger">
+            <h3>La Respuesta: No, definitivamente no son lo mismo</h3>
+            <div class="data-comparison">
+                <div class="comparison-card">
+                    <h4>
+                        <svg class="inline-icon" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        DATA
+                    </h4>
+                    <p><strong>Definicion:</strong> Hechos crudos, numeros sin contexto</p>
+                    <div class="example">"5.2 mm/s"</div>
+                    <p><strong>Caracteristicas:</strong></p>
+                    <ul style="text-align: left; margin: 1rem 0;">
+                        <li>Sin procesar</li>
+                        <li>Sin significado por si solo</li>
+                        <li>Facil de generar</li>
+                        <li>Dificil de interpretar</li>
+                    </ul>
+                </div>
+                <div class="comparison-card">
+                    <h4>
+                        <svg class="inline-icon" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                        INFORMACION
+                    </h4>
+                    <p><strong>Definicion:</strong> Datos procesados con contexto y significado</p>
+                    <div class="example">"La vibracion de la bomba esta 30% por encima del nivel normal"</div>
+                    <p><strong>Caracteristicas:</strong></p>
+                    <ul style="text-align: left; margin: 1rem 0;">
+                        <li>Procesada y organizada</li>
+                        <li>Con contexto relevante</li>
+                        <li>Facil de entender</li>
+                        <li>Util para analisis</li>
+                    </ul>
+                </div>
+                <div class="comparison-card">
+                    <h4>
+                        <svg class="inline-icon" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                        DECISION
+                    </h4>
+                    <p><strong>Definicion:</strong> Accion basada en informacion procesada</p>
+                    <div class="example">"Programar mantenimiento preventivo para la proxima semana"</div>
+                    <p><strong>Caracteristicas:</strong></p>
+                    <ul style="text-align: left; margin: 1rem 0;">
+                        <li>Accionable</li>
+                        <li>Estrategica</li>
+                        <li>Genera valor</li>
+                        <li>Impacta resultados</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SLIDE 7: BLOQUE 1 - PROBLEM + CASES ========== -->
+    <div class="slide" data-slide="6">
+        <span class="slide-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+            Bloque 1
+        </span>
+        <div class="slide-content stagger">
+            <h3>Por que esto importa en el mantenimiento industrial?</h3>
+            <div class="highlight-box">
+                <h4 style="color: var(--color-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;">
+                    <svg class="inline-icon" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 1 1 7.072 0l-.548.547A3.374 3.374 0 0 0 12 18.469c-.74 0-1.461.274-2.007.776z"/></svg>
+                    El Problema Real
+                </h4>
+                <p>En una planta industrial tipica, los sensores pueden generar <strong>mas de 1 millon de puntos de datos por dia</strong>. Sin un proceso sistematico para convertir estos datos en decisiones, es como tener una biblioteca gigante sin catalogo: toda la informacion esta ahi, pero es imposible de usar efectivamente.</p>
+            </div>
+            <h4>Casos de Exito Reales</h4>
+            <div class="grid-container-3">
+                <div class="case-study-card">
+                    <h4>
+                        <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9v.01"/><path d="M9 12v.01"/><path d="M9 15v.01"/><path d="M9 18v.01"/></svg>
+                        Refineria Petrolera
+                    </h4>
+                    <p><strong>Dato:</strong> 2,847 mediciones de vibracion/dia</p>
+                    <p><strong>Informacion:</strong> Patron de degradacion en bomba critica</p>
+                    <p><strong>Decision:</strong> Mantenimiento programado vs. falla catastrofica</p>
+                    <p><strong>Resultado:</strong> $2.3M ahorrados en 6 meses</p>
+                </div>
+                <div class="case-study-card">
+                    <h4>
+                        <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                        Planta de Energia
+                    </h4>
+                    <p><strong>Dato:</strong> Temperatura promedio: 85 C</p>
+                    <p><strong>Informacion:</strong> Tendencia creciente + 15 C en 2 semanas</p>
+                    <p><strong>Decision:</strong> Inspeccion inmediata del sistema de enfriamiento</p>
+                    <p><strong>Resultado:</strong> Evito parada no programada de 48h</p>
+                </div>
+                <div class="case-study-card">
+                    <h4>
+                        <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                        Fabrica Automotriz
+                    </h4>
+                    <p><strong>Dato:</strong> 156,000 mediciones de calidad/hora</p>
+                    <p><strong>Informacion:</strong> Desviacion en tolerancias de piezas</p>
+                    <p><strong>Decision:</strong> Ajuste de parametros de maquina</p>
+                    <p><strong>Resultado:</strong> 99.7% de calidad vs. 98.1% anterior</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SLIDE 8: BLOQUE 1 - OBJECTIVES ========== -->
+    <div class="slide" data-slide="7">
+        <span class="slide-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+            Bloque 1
+        </span>
+        <div class="slide-content stagger">
+            <h3>El Camino que Seguiremos</h3>
+            <p>En este curso, aprenderemos a construir un "puente inteligente" que convierte automaticamente los datos crudos de vibracion en decisiones de mantenimiento. No solo entenderemos la teoria, sino que construiremos un sistema real:</p>
+            <div class="highlight-box">
+                <h4 style="color: var(--color-primary); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 8px;">
+                    <svg class="inline-icon" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                    Nuestro Objetivo Final
+                </h4>
+                <div class="objective-grid">
+                    <div class="objective-item">
+                        <div class="icon"><img src="images/capture.svg" alt="Capturar datos" width="40" height="40" class="inline-icon-lg"></div>
+                        <strong>Capturar</strong><br>
+                        <small>Datos de vibracion en tiempo real</small>
+                    </div>
+                    <div class="objective-item">
+                        <div class="icon"><img src="images/process.svg" alt="Procesar con IA" width="40" height="40" class="inline-icon-lg"></div>
+                        <strong>Procesar</strong><br>
+                        <small>Con algoritmos de IA</small>
+                    </div>
+                    <div class="objective-item">
+                        <div class="icon"><img src="images/decision.svg" alt="Tomar decisiones" width="40" height="40" class="inline-icon-lg"></div>
+                        <strong>Decidir</strong><br>
+                        <small>Acciones de mantenimiento</small>
+                    </div>
+                    <div class="objective-item">
+                        <div class="icon"><img src="images/optimize.svg" alt="Optimizar costos" width="40" height="40" class="inline-icon-lg"></div>
+                        <strong>Optimizar</strong><br>
+                        <small>Costos y disponibilidad</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SLIDE 9: BLOQUE 2 - INTRO ========== -->
+    <div class="slide" data-slide="8" style="position: relative; overflow: hidden;">
+        <!-- Background: ondas de vibracion sutiles -->
+        <svg style="position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;" preserveAspectRatio="xMidYMid slice" viewBox="0 0 1200 700">
+            <!-- Onda sinusoidal principal - parte superior -->
+            <path d="M-50 120 C50 60, 150 180, 250 120 S450 60, 550 120 S750 180, 850 120 S1050 60, 1150 120 S1300 180, 1400 120"
+                  fill="none" stroke="#38bdf8" stroke-width="2" opacity="0.10"/>
+            <!-- Onda sinusoidal secundaria - parte superior, desplazada -->
+            <path d="M-50 160 C80 90, 180 230, 300 160 S520 90, 640 160 S860 230, 980 160 S1200 90, 1320 160"
+                  fill="none" stroke="#818cf8" stroke-width="1.5" opacity="0.08"/>
+            <!-- Onda atenuada - parte inferior izquierda (decae hacia la derecha) -->
+            <path d="M0 580 C30 540, 60 620, 90 580 S150 540, 180 580 S230 610, 260 590 S300 575, 340 585 S400 590, 500 588"
+                  fill="none" stroke="#38bdf8" stroke-width="2" opacity="0.12"/>
+            <!-- Segunda onda atenuada inferior -->
+            <path d="M0 620 C25 595, 50 645, 75 620 S120 595, 145 620 S185 638, 215 625 S255 614, 310 618 S400 620, 520 619"
+                  fill="none" stroke="#60a5fa" stroke-width="1.5" opacity="0.09"/>
+            <!-- Lineas verticales tipo espectro FFT - esquina derecha -->
+            <g opacity="0.09">
+                <line x1="980"  y1="520" x2="980"  y2="620" stroke="#38bdf8" stroke-width="3"/>
+                <line x1="1005" y1="490" x2="1005" y2="620" stroke="#60a5fa" stroke-width="3"/>
+                <line x1="1030" y1="540" x2="1030" y2="620" stroke="#38bdf8" stroke-width="3"/>
+                <line x1="1055" y1="470" x2="1055" y2="620" stroke="#818cf8" stroke-width="3"/>
+                <line x1="1080" y1="555" x2="1080" y2="620" stroke="#60a5fa" stroke-width="3"/>
+                <line x1="1105" y1="500" x2="1105" y2="620" stroke="#38bdf8" stroke-width="3"/>
+                <line x1="1130" y1="560" x2="1130" y2="620" stroke="#818cf8" stroke-width="3"/>
+                <line x1="1155" y1="510" x2="1155" y2="620" stroke="#60a5fa" stroke-width="3"/>
+                <line x1="980"  y1="620" x2="1170" y2="620" stroke="#94a3b8" stroke-width="1"/>
+            </g>
+            <!-- Circulo de onda concentrica - esquina superior derecha -->
+            <circle cx="1180" cy="80"  r="55"  fill="none" stroke="#818cf8" stroke-width="1.2" opacity="0.10"/>
+            <circle cx="1180" cy="80"  r="90"  fill="none" stroke="#818cf8" stroke-width="0.8" opacity="0.07"/>
+            <circle cx="1180" cy="80"  r="130" fill="none" stroke="#60a5fa" stroke-width="0.6" opacity="0.05"/>
+        </svg>
+        <span class="slide-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            Bloque 2
+        </span>
+        <div class="slide-content stagger">
+            <h2>Bloque 2: El Lenguaje Oculto de las Vibraciones</h2>
+            <p>Toda maquina en operacion "habla" a traves de las vibraciones. Nuestra mision es traducir ese lenguaje para anticiparnos a las fallas.</p>
+            <div class="placeholder">
+                <div>
+                    <img src="images/arquitectura_parte1.png" width="700" height="450" alt="Diagrama de arquitectura del sistema de analisis de vibraciones - Parte 1: Captura de datos" loading="lazy">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SLIDE 10: BLOQUE 2 - FFT ========== -->
+    <div class="slide" data-slide="9">
+        <span class="slide-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            Bloque 2
+        </span>
+        <div class="slide-content stagger">
+            <h3>El Primer Paso: Escuchar con el Sensor</h3>
+            <p>Usamos <span class="tooltip" data-tooltip="Sensores que miden vibraciones en tres direcciones: X (horizontal), Y (vertical) y Z (profundidad)">sensores triaxiales</span> como nuestros "oidos". Pero la senal que capturan es una mezcla de sonidos. Necesitamos una forma de separar las "notas" individuales para encontrar la que esta desafinada. A esto le llamamos la <span class="tooltip" data-tooltip="Fast Fourier Transform: algoritmo que convierte senales del dominio del tiempo al dominio de la frecuencia">Transformada de Fourier (FFT)</span>.</p>
+
+            <!-- SVG: FFT Diagram -->
+            <svg viewBox="0 0 800 240" class="svg-diagram" aria-labelledby="fft-title">
+                <title id="fft-title">Diagrama conceptual de la FFT</title>
+                <defs>
+                    <linearGradient id="grad-signal" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#2563EB"/>
+                        <stop offset="100%" stop-color="#60A5FA"/>
+                    </linearGradient>
+                    <linearGradient id="grad-bar-a" x1="0%" y1="100%" x2="0%" y2="0%">
+                        <stop offset="0%" stop-color="#2563EB"/>
+                        <stop offset="100%" stop-color="#3B82F6"/>
+                    </linearGradient>
+                    <linearGradient id="grad-bar-b" x1="0%" y1="100%" x2="0%" y2="0%">
+                        <stop offset="0%" stop-color="#F59E0B"/>
+                        <stop offset="100%" stop-color="#FBBF24"/>
+                    </linearGradient>
+                    <filter id="fft-shadow" x="-4%" y="-4%" width="108%" height="116%">
+                        <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0F172A" flood-opacity="0.06"/>
+                    </filter>
+                </defs>
+                <g font-family="Inter, sans-serif">
+                    <!-- Left card: Time domain -->
+                    <rect x="20" y="10" width="300" height="220" rx="14" fill="white" stroke="#E2E8F0" stroke-width="1.5" filter="url(#fft-shadow)"/>
+                    <text x="170" y="42" text-anchor="middle" font-size="15" font-weight="600" fill="#0F172A" font-family="Space Grotesk, sans-serif">Senal Compleja (Tiempo)</text>
+                    <!-- Complex wave -->
+                    <path d="M 50 135 C 70 95, 90 165, 110 120 C 130 75, 150 170, 170 130 C 190 90, 210 160, 230 125 C 250 85, 270 155, 290 135" stroke="url(#grad-signal)" stroke-width="3" fill="none" stroke-linecap="round"/>
+                    <!-- Axis -->
+                    <line x1="45" y1="195" x2="295" y2="195" stroke="#CBD5E1" stroke-width="1.5"/>
+                    <text x="170" y="215" text-anchor="middle" font-size="12" fill="#94A3B8">Tiempo</text>
+
+                    <!-- Center: FFT Arrow -->
+                    <rect x="345" y="95" width="110" height="50" rx="25" fill="#0F172A"/>
+                    <text x="400" y="126" text-anchor="middle" font-size="16" font-weight="700" fill="white" font-family="Space Grotesk, sans-serif">FFT</text>
+                    <line x1="320" y1="120" x2="345" y2="120" stroke="#F59E0B" stroke-width="2.5" marker-end="url(#arrow)"/>
+                    <line x1="455" y1="120" x2="478" y2="120" stroke="#F59E0B" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+                    <!-- Right card: Frequency domain -->
+                    <rect x="480" y="10" width="300" height="220" rx="14" fill="white" stroke="#E2E8F0" stroke-width="1.5" filter="url(#fft-shadow)"/>
+                    <text x="630" y="42" text-anchor="middle" font-size="15" font-weight="600" fill="#0F172A" font-family="Space Grotesk, sans-serif">Frecuencias (Espectro)</text>
+                    <!-- Bars (y = base 182 - height) -->
+                    <rect x="520" y="152" width="24" height="30" rx="4" fill="#CBD5E1"/>
+                    <rect x="556" y="87"  width="24" height="95" rx="4" fill="url(#grad-bar-a)"/>
+                    <rect x="592" y="162" width="24" height="20" rx="4" fill="#CBD5E1"/>
+                    <rect x="628" y="127" width="24" height="55" rx="4" fill="url(#grad-bar-b)"/>
+                    <rect x="664" y="167" width="24" height="15" rx="4" fill="#CBD5E1"/>
+                    <rect x="700" y="172" width="24" height="10" rx="4" fill="#CBD5E1"/>
+                    <!-- Label Falla A con linea indicadora -->
+                    <line x1="568" y1="84" x2="568" y2="76" stroke="#2563EB" stroke-width="1.5"/>
+                    <rect x="535" y="58" width="66" height="20" rx="6" fill="#DBEAFE"/>
+                    <text x="568" y="72" text-anchor="middle" font-size="11" font-weight="700" fill="#1D4ED8">Falla A</text>
+                    <!-- Label Falla B con linea indicadora -->
+                    <line x1="640" y1="124" x2="640" y2="116" stroke="#D97706" stroke-width="1.5"/>
+                    <rect x="608" y="98" width="64" height="20" rx="6" fill="#FEF3C7"/>
+                    <text x="640" y="112" text-anchor="middle" font-size="11" font-weight="700" fill="#B45309">Falla B</text>
+                    <!-- Axis -->
+                    <line x1="515" y1="185" x2="735" y2="185" stroke="#CBD5E1" stroke-width="1.5"/>
+                    <text x="630" y="210" text-anchor="middle" font-size="12" fill="#94A3B8">Frecuencia</text>
+                </g>
+            </svg>
+
+            <div class="placeholder">
+                <div>
+                    <img src="images/transformada_fourier.png" width="500" height="450" alt="Ejemplo visual de la Transformada de Fourier aplicada a senales de vibracion" loading="lazy">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SLIDE 11: BLOQUE 2 - 3 AXES ========== -->
+    <div class="slide" data-slide="10">
+        <span class="slide-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            Bloque 2
+        </span>
+        <div class="slide-content stagger">
+            <h3>Por que es importante escuchar en los 3 ejes (X, Y, Z)?</h3>
+            <p>Imaginen que una llanta de auto esta desbalanceada. Donde sienten mas la vibracion? En el volante, de lado a lado! Pero si un motor esta desalineado con una bomba, la vibracion puede ser mas fuerte hacia adelante y atras. Escuchar en un solo eje es como mirar una escultura desde un unico angulo: te pierdes la historia completa. Los 3 ejes nos dan una vision 3D de como se esta moviendo la maquina, permitiendonos diagnosticar fallas que son invisibles en una sola direccion.</p>
+            <div style="display:flex;justify-content:center;margin-top:2rem;">
+                <svg viewBox="0 0 300 260" width="300" height="260">
+                    <defs>
+                        <marker id="axis-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#64748B"/></marker>
+                    </defs>
+                    <!-- Origin -->
+                    <circle cx="150" cy="160" r="6" fill="#2563EB"/>
+                    <!-- X axis -->
+                    <line x1="150" y1="160" x2="270" y2="200" stroke="#DC2626" stroke-width="2.5" marker-end="url(#axis-arrow)"/>
+                    <text x="275" y="210" font-size="16" font-weight="700" fill="#DC2626" font-family="Space Grotesk, sans-serif">X</text>
+                    <!-- Y axis -->
+                    <line x1="150" y1="160" x2="150" y2="30" stroke="#059669" stroke-width="2.5" marker-end="url(#axis-arrow)"/>
+                    <text x="158" y="25" font-size="16" font-weight="700" fill="#059669" font-family="Space Grotesk, sans-serif">Y</text>
+                    <!-- Z axis -->
+                    <line x1="150" y1="160" x2="50" y2="210" stroke="#2563EB" stroke-width="2.5" marker-end="url(#axis-arrow)"/>
+                    <text x="35" y="220" font-size="16" font-weight="700" fill="#2563EB" font-family="Space Grotesk, sans-serif">Z</text>
+                    <!-- Label -->
+                    <text x="150" y="250" text-anchor="middle" font-size="13" fill="#64748B" font-family="Inter, sans-serif">Vision 3D de la vibracion</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SLIDE 12: BLOQUE 2 - KPIs ========== -->
+    <div class="slide" data-slide="11">
+        <span class="slide-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            Bloque 2
+        </span>
+        <div class="slide-content stagger">
+            <h3>El Segundo Paso: Extrayendo Inteligencia (KPIs)</h3>
+            <div class="kpi-container">
+                <div class="kpi-card">
+                    <h4>1. Valor Pico</h4>
+                    <p>Es el punto mas alto de la vibracion. Sensible a <span class="tooltip" data-tooltip="Eventos de alta energia que ocurren en muy poco tiempo, como golpes o impactos">impactos</span> o "golpes" repentinos, tipico de fallas en <span class="tooltip" data-tooltip="Componentes mecanicos que permiten el movimiento rotatorio con minima friccion">rodamientos</span>.</p>
+                    <p><strong>Unidad:</strong> <span class="tooltip" data-tooltip="Aceleracion en unidades de gravedad terrestre">Aceleracion (g)</span> o <span class="tooltip" data-tooltip="Velocidad en milimetros por segundo">Velocidad (mm/s)</span>.</p>
+                    <svg viewBox="0 0 200 90" style="width:100%; max-width: 200px;">
+                        <path d="M5 50 L25 50 L45 35 L60 62 L80 50 L100 50 L112 12 L130 50 L200 50" stroke="#DC2626" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                        <line x1="112" y1="12" x2="112" y2="80" stroke-dasharray="4,3" stroke="#CBD5E1" stroke-width="1"/>
+                        <circle cx="112" cy="12" r="4" fill="#DC2626"/>
+                        <text x="125" y="18" font-size="10" fill="#DC2626" font-weight="600" font-family="Inter, sans-serif">Pico</text>
+                    </svg>
+                </div>
+                <div class="kpi-card">
+                    <h4>2. RMS (Valor Eficaz)</h4>
+                    <p>La "energia" o "potencia destructiva" de la vibracion. Mide la salud <strong>general</strong> y a largo plazo de la maquina.</p>
+                    <p><strong>Unidad:</strong> <span class="tooltip" data-tooltip="Root Mean Square: valor cuadratico medio que representa la energia promedio de la senal">Velocidad (mm/s)</span> es la mas comun para la norma ISO.</p>
+                    <svg viewBox="0 0 200 90" style="width:100%; max-width: 200px;">
+                        <path d="M5 50 C 50 30, 100 65, 150 40 C 170 32, 185 45, 195 50" stroke="#2563EB" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                        <line y1="38" y2="38" x1="5" x2="195" stroke-dasharray="4,3" stroke="#CBD5E1" stroke-width="1"/>
+                        <rect x="60" y="30" width="80" height="16" rx="4" fill="#EFF6FF"/>
+                        <text x="100" y="42" text-anchor="middle" font-size="10" fill="#2563EB" font-weight="600" font-family="Inter, sans-serif">Nivel RMS</text>
+                    </svg>
+                </div>
+                <div class="kpi-card">
+                    <h4>3. Factor de Cresta</h4>
+                    <p>La relacion <strong>Pico / RMS</strong>. Un valor alto (>6) es un excelente indicador <strong>temprano</strong> de fallas de rodamientos.</p>
+                    <p><strong>Unidad:</strong> Adimensional (es un ratio).</p>
+                    <svg viewBox="0 0 200 90" style="width:100%; max-width: 200px;">
+                        <path d="M5 52 C 30 48, 60 55, 90 52 L 105 12 L 120 52 C 150 48, 170 55, 195 52" stroke="#F59E0B" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="105" cy="12" r="4" fill="#F59E0B"/>
+                        <rect x="55" y="25" width="100" height="16" rx="4" fill="#FFFBEB"/>
+                        <text x="105" y="37" text-anchor="middle" font-size="10" fill="#D97706" font-weight="600" font-family="Inter, sans-serif">Pico alto, RMS bajo</text>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SLIDE 13: BLOQUE 3 - ISO ========== -->
+    <div class="slide" data-slide="12">
+        <span class="slide-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            Bloque 3
+        </span>
+        <div class="slide-content stagger">
+            <h2>Bloque 3: Vibracion Normal o Peligrosa? ISO 20816</h2>
+            <p>Ok, tenemos un RMS de 5.2 mm/s. Es bueno o malo? Depende de la maquina. La norma <strong>ISO 20816</strong> es la version actual que reemplaza a la antigua ISO 10816, consolidando y actualizando los criterios de evaluacion de vibraciones mecanicas. Esta norma nos da un "semaforo" de referencia, pero este cambia segun el tipo y tamano del equipo.</p>
+            <div class="accordion-container">
+                <details class="accordion-item">
+                    <summary>
+                        <svg class="inline-icon" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+                        ISO 20816-3: Máquinas acopladas (15 kW - 50 kW)
+                        <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    </summary>
+                    <div class="content">
+                        <div class="placeholder">
+                            <div>
+                                <img src="images/iso20816_3.png" width="700" height="450" alt="Tabla de umbrales ISO 20816-3 para máquinas acopladas (15 kW - 50 kW)" loading="lazy">
+                            </div>
+                        </div>
+                    </div>
+                </details>
+                <details class="accordion-item">
+                    <summary>
+                        <svg class="inline-icon" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+                        ISO 20816-4: Máquinas hidráulicas
+                        <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    </summary>
+                    <div class="content">
+                        <div class="placeholder">
+                            <div>
+                                <img src="images/iso20816_4.png" width="700" height="450" alt="Tabla de umbrales ISO 20816-4 para máquinas hidráulicas" loading="lazy">
+                            </div>
+                        </div>
+                    </div>
+                </details>
+                <details class="accordion-item">
+                    <summary>
+                        <svg class="inline-icon" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+                        ISO 20816-7: Evaluación de vibración en motores pequeños (&lt;15 kW)
+                        <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    </summary>
+                    <div class="content">
+                        <div class="placeholder">
+                            <div>
+                                <img src="images/iso20816_7.png" width="700" height="450" alt="Tabla de umbrales ISO 20816-7 para evaluación de vibración en motores pequeños (&lt;15 kW)" loading="lazy">
+                            </div>
+                        </div>
+                    </div>
+                </details>
+            </div>
+            <div class="highlight-box" style="margin-top:1.5rem;">
+                <h4 style="color: var(--color-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;">
+                    <svg class="inline-icon" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 1 1 7.072 0l-.548.547A3.374 3.374 0 0 0 12 18.469c-.74 0-1.461.274-2.007.776z"/></svg>
+                    Nota
+                </h4>
+                <p>Con respecto a las clases, se debe entender que se agrupan teniendo como criterio la <strong>potencia de la maquina</strong> y el <strong>tipo de soporte</strong> sobre el cual se encuentra instalada. De esta forma, <strong>los grupos se diferencian segun rangos de potencia (por ejemplo, hasta 15 kW, de 15 kW a 300 kW, o superiores a 300 kW) y segun si el soporte es rigido o flexible</strong>, ya que el tipo de base influye directamente en los niveles de vibracion admisibles. El analisis de la severidad es realizado por ingenieros de mantenimiento de diferentes categorias.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SLIDE 14: BLOQUE 4 - INTRO ========== -->
+    <div class="slide" data-slide="13">
+        <span class="slide-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93L12 22l-.75-12.07A4.001 4.001 0 0 1 12 2z"/><circle cx="12" cy="6" r="1"/></svg>
+            Bloque 4
+        </span>
+        <div class="slide-content stagger">
+            <h2>Bloque 4: Creando un Supervisor Inteligente con IA</h2>
+            <p>La norma ISO es genial, pero solo ve una parte de la foto (el RMS). Un analista experto conectaria el RMS, el Factor de Cresta y la Temperatura para dar un diagnostico mas preciso. Eso es exactamente lo que hara nuestro "supervisor" de IA!</p>
+            <h3 style="margin-top:1.5rem;">Que problema resuelve nuestro supervisor?</h3>
+
+            <!-- HTML: Manual vs AI comparison -->
+            <div class="supervisor-comparison">
+
+                <!-- LEFT: Proceso Manual -->
+                <div class="comp-panel comp-panel--manual">
+                    <div class="comp-panel__header">PROCESO MANUAL</div>
+                    <div class="comp-panel__body">
+                        <div class="comp-sublabel">Entradas</div>
+                        <div class="comp-tags">
+                            <span class="comp-tag">RMS</span>
+                            <span class="comp-tag">Pico</span>
+                            <span class="comp-tag">F. Cresta</span>
+                            <span class="comp-tag">Temp</span>
+                        </div>
+                        <div class="comp-arrow-down">↓</div>
+                        <div class="comp-figure">
+                            <svg viewBox="0 0 56 56" width="56" height="56">
+                                <circle cx="28" cy="28" r="27" fill="white" stroke="#E2E8F0" stroke-width="1.5"/>
+                                <circle cx="28" cy="20" r="9" fill="none" stroke="#64748B" stroke-width="2"/>
+                                <path d="M10 46 C10 32, 46 32, 46 46" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            <span class="comp-figure-label">Analista</span>
+                        </div>
+                        <div class="comp-arrow-down">↓</div>
+                        <div class="comp-time comp-time--slow">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            2–4 Horas
+                        </div>
+                    </div>
+                    <div class="comp-panel__footer">
+                        <div class="comp-footer-main">✗ Lento y propenso a errores</div>
+                        <div class="comp-footer-sub">· Dependiente del experto</div>
+                        <div class="comp-footer-sub">· Inconsistencia en criterios</div>
+                    </div>
+                </div>
+
+                <!-- CENTER -->
+                <div class="comp-center">
+                    <div class="comp-arrow-side">→</div>
+                    <div class="comp-ia-badge">IA</div>
+                    <div class="comp-arrow-side">→</div>
+                </div>
+
+                <!-- RIGHT: Supervisor Automatico -->
+                <div class="comp-panel comp-panel--ai">
+                    <div class="comp-panel__header">SUPERVISOR AUTOMATICO</div>
+                    <div class="comp-panel__body">
+                        <div class="comp-sublabel">Entradas</div>
+                        <div class="comp-tags">
+                            <span class="comp-tag">RMS</span>
+                            <span class="comp-tag">Pico</span>
+                            <span class="comp-tag">F. Cresta</span>
+                            <span class="comp-tag">Temp</span>
+                        </div>
+                        <div class="comp-arrow-down">↓</div>
+                        <div class="comp-figure">
+                            <svg viewBox="0 0 56 56" width="56" height="56">
+                                <rect x="1" y="1" width="54" height="54" rx="14" fill="white" stroke="#A7F3D0" stroke-width="1.5"/>
+                                <circle cx="28" cy="28" r="14" fill="none" stroke="#059669" stroke-width="2"/>
+                                <circle cx="22" cy="24" r="2.5" fill="#059669"/>
+                                <circle cx="34" cy="24" r="2.5" fill="#059669"/>
+                                <path d="M20 34 Q28 40 36 34" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round"/>
+                                <line x1="28" y1="14" x2="28" y2="10" stroke="#059669" stroke-width="1.5"/>
+                                <line x1="28" y1="42" x2="28" y2="46" stroke="#059669" stroke-width="1.5"/>
+                                <line x1="14" y1="28" x2="10" y2="28" stroke="#059669" stroke-width="1.5"/>
+                                <line x1="42" y1="28" x2="46" y2="28" stroke="#059669" stroke-width="1.5"/>
+                            </svg>
+                            <span class="comp-figure-label">IA + Algoritmos</span>
+                        </div>
+                        <div class="comp-arrow-down">↓</div>
+                        <div class="comp-time comp-time--fast">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                            2–5 Segundos
+                        </div>
+                    </div>
+                    <div class="comp-panel__footer">
+                        <div class="comp-footer-main">✓ Instantaneo y consistente</div>
+                        <div class="comp-footer-sub">· Disponible 24/7</div>
+                        <div class="comp-footer-sub">· Criterios uniformes</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SLIDE 15: BLOQUE 4 - ARCHITECTURE ========== -->
+    <div class="slide" data-slide="14">
+        <span class="slide-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93L12 22l-.75-12.07A4.001 4.001 0 0 1 12 2z"/><circle cx="12" cy="6" r="1"/></svg>
+            Bloque 4
+        </span>
+        <div class="slide-content stagger">
+            <h3>Flujo Total del Proyecto</h3>
+            <div class="placeholder">
+                <div>
+                    <img src="images/arquitectura_completa_vibracion.png" width="700" height="450" alt="Diagrama completo de la arquitectura del sistema de analisis de vibraciones con IA" loading="lazy">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SLIDE 16: BLOQUE 4 - MODELS + TOOLS ========== -->
+    <div class="slide" data-slide="15">
+        <span class="slide-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93L12 22l-.75-12.07A4.001 4.001 0 0 1 12 2z"/><circle cx="12" cy="6" r="1"/></svg>
+            Bloque 4
+        </span>
+        <div class="slide-content stagger">
+            <h3>Por que Regresion Logistica y no otros modelos?</h3>
+            <p>Existen muchos modelos de "regresion", pero no todos sirven para lo mismo. La <strong>regresion lineal</strong>, por ejemplo, intenta predecir un numero continuo (como el precio de una casa). La <strong>Regresion Logistica</strong> es especialista en problemas de clasificacion binaria como el nuestro, calculando la probabilidad de que una maquina pertenezca a una clase de algun tipo.</p>
+            <div class="grid-container-3">
+                <div class="comparison-card">
+                    <h4 style="text-align: center; margin-bottom: 1rem; color: var(--color-primary);">Regresion Lineal</h4>
+                    <div>
+                        <img src="images/regresion_lineal.jpg" width="200" height="150" alt="Grafico de regresion lineal para prediccion de valores continuos" loading="lazy">
+                    </div>
+                    <p style="text-align: center; margin-top: 1rem; font-size: 0.9rem; color: var(--color-text-muted);">
+                        <strong>Uso:</strong> Prediccion de valores continuos
+                    </p>
+                </div>
+                <div class="comparison-card">
+                    <h4 style="text-align: center; margin-bottom: 1rem; color: var(--color-primary);">Regresion Logistica</h4>
+                    <div>
+                        <img src="images/regresion_logistica.png" width="200" height="150" alt="Grafico de regresion logistica para clasificacion binaria" loading="lazy">
+                    </div>
+                    <p style="text-align: center; margin-top: 1rem; font-size: 0.9rem; color: var(--color-text-muted);">
+                        <strong>Uso:</strong> Clasificacion binaria
+                    </p>
+                </div>
+                <div class="comparison-card">
+                    <h4 style="text-align: center; margin-bottom: 1rem; color: var(--color-primary);">SVM</h4>
+                    <div>
+                        <img src="images/svm.png" width="200" height="150" alt="Grafico de Support Vector Machine (SVM) para clasificacion" loading="lazy">
+                    </div>
+                    <p style="text-align: center; margin-top: 1rem; font-size: 0.9rem; color: var(--color-text-muted);">
+                        <strong>Uso:</strong> Clasificacion compleja
+                    </p>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 2rem;">Nuestras Herramientas (Tecnologias)</h3>
+            <ul>
+                <li><strong>Lenguaje:</strong> Python. El estandar de facto en ciencia de datos por su simplicidad y sus potentes librerias (Pandas, Scikit-learn).</li>
+            </ul>
+            <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1rem;">
+                <img src="images/python.png" width="200" height="150" alt="Logo de Python" loading="lazy">
+                <img src="images/scikit_learn.png" width="200" height="100" alt="Logo de Scikit-learn" loading="lazy">
+            </div>
+            <ul>
+                <li><strong>Entorno:</strong> Google Colab. Un cuaderno interactivo en la nube que nos da acceso gratuito a GPUs y nos permite colaborar facilmente.</li>
+            </ul>
+            <div style="margin-bottom:1rem;">
+                <img src="images/google_colab.png" width="200" height="150" alt="Logo de Google Colab" loading="lazy">
+            </div>
+            <ul>
+                <li><strong>Datos:</strong> Archivos CSV. Datos reales de vibracion y temperatura tomados en campo por un sensor, nuestra materia prima.</li>
+            </ul>
+            <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+                <img src="images/archivocsv.png" width="100" height="150" alt="Icono de archivo CSV" loading="lazy">
+                <img src="images/delta.webp" width="100" height="450" alt="Logo de Delta" loading="lazy">
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SLIDE 17: BLOQUE 5 - PRACTICE ========== -->
+    <div class="slide" data-slide="16">
+        <span class="slide-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Bloque 5
+        </span>
+        <div class="slide-content stagger">
+            <h2>Bloque 5: Poniendo a Prueba Nuestro Modelo</h2>
+
+            <h3>Que lograremos al final de la practica?</h3>
+            <p>Construiremos un sistema funcional que toma datos crudos del sensor y, automaticamente, genera un diagnostico claro y accionable.</p>
+
+            <h3 style="margin-top:1.5rem;">Preparacion del Entorno</h3>
+            <p>Para la parte practica, solo necesitaran dos cosas:</p>
+            <ul style="margin-left: 40px;">
+                <li>Una cuenta de <strong>Google (Gmail)</strong> para poder acceder a Google Colab.</li>
+                <li>Ganas de aprender y experimentar!</li>
+            </ul>
+
+            <h3 style="margin-top:1.5rem;">Vision a Futuro: De Colab a una App Real</h3>
+            <p>Lo que aprenderemos en Colab es la "inteligencia" de un sistema real. El siguiente paso seria llevar esa inteligencia a una aplicacion robusta que el personal de mantenimiento pueda usar en su dia a dia.</p>
+            <div class="placeholder">
+                <div>
+                    <img src="images/vision_a_futuro.png" width="700" height="650" alt="Diagrama de vision a futuro: evolucion del sistema de analisis de vibraciones hacia una aplicacion real" loading="lazy">
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div><!-- end slides-container -->
+
+<!-- Navigation Bar -->
+<nav class="nav-bar" id="nav-bar">
+    <button class="nav-btn" id="prev-btn" disabled aria-label="Diapositiva anterior">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Anterior
+    </button>
+    <span class="slide-counter" id="slide-counter">1 / 17</span>
+    <button class="nav-btn" id="next-btn" aria-label="Siguiente diapositiva">
+        Siguiente
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+</nav>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('slides-container');
+    const slides = Array.from(container.querySelectorAll('.slide'));
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const counter = document.getElementById('slide-counter');
+    const dotsContainer = document.getElementById('dots-container');
+    const fullscreenBtn = document.getElementById('fullscreen-btn');
+    const totalSlides = slides.length;
+    let currentSlide = 0;
+    let isNavigating = false;
+    let lastDirection = 'right';
+
+    // Create dots
+    slides.forEach((_, i) => {
+        const dot = document.createElement('button');
+        dot.className = 'dot' + (i === 0 ? ' active' : '');
+        dot.setAttribute('aria-label', 'Ir a diapositiva ' + (i + 1));
+        dot.addEventListener('click', () => goToSlide(i));
+        dotsContainer.appendChild(dot);
+    });
+
+    // Lazy loading for images
+    const imageObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                img.classList.add('loaded');
+                imageObserver.unobserve(img);
+            }
+        });
+    });
+    document.querySelectorAll('img[loading="lazy"]').forEach(img => {
+        imageObserver.observe(img);
+    });
+
+    function updateUI() {
+        // Counter
+        counter.textContent = (currentSlide + 1) + ' / ' + totalSlides;
+
+        // Buttons
+        prevBtn.disabled = currentSlide === 0;
+        nextBtn.disabled = currentSlide === totalSlides - 1;
+        nextBtn.querySelector('span')?.remove();
+
+        // Dots
+        const dots = dotsContainer.querySelectorAll('.dot');
+        dots.forEach((d, i) => {
+            d.classList.toggle('active', i === currentSlide);
+        });
+
+        // Active slide class
+        slides.forEach((s, i) => {
+            if (i === currentSlide) {
+                s.classList.remove('from-left');
+                if (lastDirection === 'left') {
+                    s.classList.add('from-left');
+                }
+                s.classList.add('active');
+                // Reset scroll position for the new slide
+                s.scrollTop = 0;
+            } else {
+                s.classList.remove('active', 'from-left');
+            }
+        });
+    }
+
+    function goToSlide(index) {
+        if (index < 0 || index >= totalSlides || isNavigating) return;
+        isNavigating = true;
+        lastDirection = index > currentSlide ? 'right' : 'left';
+        currentSlide = index;
+
+        // Remove active from all first
+        slides.forEach(s => s.classList.remove('active', 'from-left'));
+
+        container.scrollTo({
+            left: currentSlide * window.innerWidth,
+            behavior: 'smooth'
+        });
+
+        // Small delay to let scroll start, then activate
+        setTimeout(() => {
+            updateUI();
+            isNavigating = false;
+        }, 50);
+    }
+
+    // Make goToSlide global for TOC links
+    window.goToSlide = goToSlide;
+
+    // Navigation buttons
+    prevBtn.addEventListener('click', () => goToSlide(currentSlide - 1));
+    nextBtn.addEventListener('click', () => goToSlide(currentSlide + 1));
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        const activeSlide = slides[currentSlide];
+        const hasOverflow = activeSlide && activeSlide.scrollHeight > activeSlide.clientHeight + 10;
+
+        if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            goToSlide(currentSlide + 1);
+        } else if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            goToSlide(currentSlide - 1);
+        } else if (e.key === 'ArrowDown' && hasOverflow) {
+            // Let the slide scroll naturally, don't switch
+            return;
+        } else if (e.key === 'ArrowUp' && hasOverflow) {
+            // Let the slide scroll naturally, don't switch
+            return;
+        } else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            goToSlide(currentSlide + 1);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            goToSlide(currentSlide - 1);
+        } else if (e.key === 'Home') {
+            e.preventDefault();
+            goToSlide(0);
+        } else if (e.key === 'End') {
+            e.preventDefault();
+            goToSlide(totalSlides - 1);
+        } else if (e.key === 'f' || e.key === 'F') {
+            e.preventDefault();
+            toggleFullscreen();
+        }
+    });
+
+    // Scroll snap detection - sync currentSlide with actual scroll position
+    let scrollTimeout;
+    container.addEventListener('scroll', () => {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+            const scrollLeft = container.scrollLeft;
+            const slideWidth = window.innerWidth;
+            const detected = Math.round(scrollLeft / slideWidth);
+            if (detected !== currentSlide && detected >= 0 && detected < totalSlides) {
+                lastDirection = detected > currentSlide ? 'right' : 'left';
+                currentSlide = detected;
+                updateUI();
+            }
+        }, 100);
+    });
+
+    // Fullscreen
+    function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => {
+                console.log('Error al entrar en pantalla completa:', err);
+            });
+        } else {
+            document.exitFullscreen();
+        }
+    }
+    fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        container.scrollTo({
+            left: currentSlide * window.innerWidth,
+            behavior: 'auto'
+        });
+    });
+
+    // ===== SCROLL HINT INDICATOR =====
+    // Add scroll-hint element to each slide
+    slides.forEach(slide => {
+        const hint = document.createElement('div');
+        hint.className = 'scroll-hint';
+        hint.innerHTML = '<span>Desplaza</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+        slide.appendChild(hint);
+    });
+
+    function checkScrollHints() {
+        slides.forEach((slide, i) => {
+            const hint = slide.querySelector('.scroll-hint');
+            if (!hint) return;
+            // Check if slide content overflows
+            const hasOverflow = slide.scrollHeight > slide.clientHeight + 10;
+            const isAtBottom = slide.scrollTop + slide.clientHeight >= slide.scrollHeight - 20;
+            const isActive = i === currentSlide;
+
+            if (hasOverflow && !isAtBottom && isActive) {
+                hint.classList.add('visible');
+            } else {
+                hint.classList.remove('visible');
+            }
+        });
+    }
+
+    // Check scroll hints on slide change
+    const origUpdateUI = updateUI;
+    const origUpdateUIRef = updateUI;
+
+    // Listen for scroll within each slide to hide hint when scrolled
+    slides.forEach(slide => {
+        slide.addEventListener('scroll', () => {
+            const hint = slide.querySelector('.scroll-hint');
+            if (!hint) return;
+            const isAtBottom = slide.scrollTop + slide.clientHeight >= slide.scrollHeight - 20;
+            if (isAtBottom || slide.scrollTop > 30) {
+                hint.classList.remove('visible');
+            } else if (slide.scrollHeight > slide.clientHeight + 10) {
+                hint.classList.add('visible');
+            }
+        });
+    });
+
+    // Check hints after each navigation
+    const originalGoToSlide = goToSlide;
+
+    // Recheck hints after slide transitions complete
+    function scheduleHintCheck() {
+        setTimeout(checkScrollHints, 700);
+    }
+
+    // Patch updateUI to also trigger hint checks
+    const _origUpdateUI = updateUI;
+    function updateUIWithHints() {
+        _origUpdateUI();
+        scheduleHintCheck();
+    }
+
+    // Override goToSlide to use hint-aware update
+    window.goToSlide = function(index) {
+        if (index < 0 || index >= totalSlides || isNavigating) return;
+        isNavigating = true;
+        lastDirection = index > currentSlide ? 'right' : 'left';
+        currentSlide = index;
+        slides.forEach(s => s.classList.remove('active', 'from-left'));
+        container.scrollTo({
+            left: currentSlide * window.innerWidth,
+            behavior: 'smooth'
+        });
+        setTimeout(() => {
+            updateUI();
+            scheduleHintCheck();
+            isNavigating = false;
+        }, 50);
+    };
+
+    // Rebind buttons to new goToSlide
+    prevBtn.onclick = () => window.goToSlide(currentSlide - 1);
+    nextBtn.onclick = () => window.goToSlide(currentSlide + 1);
+
+    // Initialize
+    updateUI();
+    setTimeout(checkScrollHints, 1000);
+});
+</script>
+</body>
+</html>
